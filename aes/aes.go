@@ -5,7 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"errors"
-	"git.phjr.com/crypto/sha3"
+	"github.com/phjt-go/crypto/sha3"
 )
 
 // PKCS5Padding PKCS5补位

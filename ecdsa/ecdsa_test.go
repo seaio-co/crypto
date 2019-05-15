@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"bytes"
-	"git.phjr.com/crypto/base58"
-	"git.phjr.com/crypto/sha3"
+	"github.com/phjt-go/crypto/base58"
+	"github.com/phjt-go/crypto/sha3"
 	"log"
 )
 
