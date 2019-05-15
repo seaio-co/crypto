@@ -105,6 +105,39 @@ func (p *PrivateKey) Serialize() []byte {
 	return paddedAppend(PrivKeyBytesLen, b, p.D.Bytes())
 }
 
+// PubKeyToHex 公钥转哈希字符串
+func PubKeyToHex(pubKey *PublicKey) string {
+
+	// 将公钥序列化为65位非压缩
+	unCompress := pubKey.SerializeUncompressed()
+
+	// 将Byte类型65位非压缩转哈希字符串
+	return hex.EncodeToString(unCompress)
+}
+
+// HexToPubKey 哈希字符串转公钥
+func HexToPubKey(hexPub string) (*PublicKey, error) {
+	pubKey, err := HexToECDSAPub(hexPub)
+	if err != nil {
+		return nil, err
+	}
+	return pubKey, nil
+}
+
+// HexToPrvKey 哈希转私钥
+func PrvKeyToHex(prvKey *PrivateKey) string {
+	return hex.EncodeToString(FromECDSA(prvKey))
+}
+
+// HexToPrvKey 哈希转私钥
+func HexToPrvKey(hexPrvKey string) (*PrivateKey, error) {
+	prv, err := HexToECDSA(hexPrvKey)
+	if err != nil {
+		return nil, err
+	}
+	return prv, nil
+}
+
 // Decrypt 解密使用加密函数加密的数据。
 func Decrypt(priv *PrivateKey, in []byte) ([]byte, error) {
 	// IV + Curve params/X/Y + 1 block + HMAC-256
