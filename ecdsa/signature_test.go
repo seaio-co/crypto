@@ -2,6 +2,7 @@ package ecdsa
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"testing"
 )
@@ -150,4 +151,91 @@ func Test_SignCompact3(t *testing.T) {
 	t.Log("还原后的Hash", hash)
 	t.Log("我的Hash", hash2)
 
+}
+
+// TestPrvKeySign 签名测试
+func TestPrvKeySign(t *testing.T) {
+
+	// 节点地址
+	address := "0x89d336c09c1a8777201970e4fb4b1676f8f750ac"
+
+	// 管理员私钥字符串
+	mPrivateKey := "89d2b7fc2bd60ebf29c3b1da24eb74cd6911019c3f1e072c6c4dcec466d7f6bc"
+
+	// 推导地址hash
+	hash := DoubleHashB([]byte(address))
+
+	// 管理员私钥签名
+	signature, err := PrvKeySign(mPrivateKey, hash)
+	if err != nil {
+		t.Errorf("签名失败：%v", err)
+	}
+	t.Log("私钥签名：", hex.EncodeToString(signature))
+}
+
+// TestPubKeyCheckSign 验签测试
+func TestPubKeyCheckSign(t *testing.T) {
+	// 节点地址
+	address := "0x528da20666570354a1348a8825633aefc915f7ba"
+
+	// 管理员私钥字符串
+	mPrivateKey := "89d2b7fc2bd60ebf29c3b1da24eb74cd6911019c3f1e072c6c4dcec466d7f6bc"
+
+	// 管理员公钥字符串
+	mPublicKey := "040849fa80cdc6ac365f1506989f704b7f0a55ea8bc106fb9a8e2327293a556e2d4e8d1e902c8dfec0d73a6838a62000b2f26f510967d6e0b63bf63e3416e420b1"
+
+	// 推导节点地址hash
+	hash := DoubleHashB([]byte(address))
+
+	// 管理员私钥签名
+	signature, err := PrvKeySign(mPrivateKey, hash)
+	if err != nil {
+		t.Errorf("签名失败：%v", err)
+	}
+
+	// 签名校验
+	checked, err := PubKeyCheckSign(signature, hash, mPublicKey)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(checked)
+}
+
+// BenchmarkPrvKeySign 签名压测
+func BenchmarkPrvKeySign(b *testing.B) {
+	// 节点地址
+	address := "0x89d336c09c1a8777201970e4fb4b1676f8f750ac"
+
+	// 管理员私钥字符串
+	mPrivateKey := "89d2b7fc2bd60ebf29c3b1da24eb74cd6911019c3f1e072c6c4dcec466d7f6bc"
+
+	// 推导地址hash
+	hash := DoubleHashB([]byte(address))
+
+	for i := 0; i < b.N; i++ {
+		// 管理员私钥签名
+		PrvKeySign(mPrivateKey, hash)
+	}
+}
+
+// BenchmarkPubKeyCheckSign 验签压测
+func BenchmarkPubKeyCheckSign(b *testing.B) {
+
+	// 管理员公钥字符串
+	mPublicKey := "040849fa80cdc6ac365f1506989f704b7f0a55ea8bc106fb9a8e2327293a556e2d4e8d1e902c8dfec0d73a6838a62000b2f26f510967d6e0b63bf63e3416e420b1"
+
+	sign := "20a4272a16faa252bbbbc85ba07d6c908d3a4fc0da75572a010bee763a6b4c5b0e3284a89b522d8e702971c54d607037ccbbb09df5dd610ebd98eeb94d4d6b8ef0"
+
+	// 节点地址
+	address := "0x89d336c09c1a8777201970e4fb4b1676f8f750ac"
+
+	// 推导地址hash
+	hash := DoubleHashB([]byte(address))
+
+	// 签名校验
+	signature, _ := hex.DecodeString(sign)
+
+	for i := 0; i < b.N; i++ {
+		PubKeyCheckSign(signature, hash, mPublicKey)
+	}
 }

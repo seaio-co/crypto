@@ -442,3 +442,48 @@ func SignAddress(address Address, privateKey *PrivateKey) ([]byte, error) {
 
 	return sign, nil
 }
+
+// PrvKeySign 节点私钥加签
+func PrvKeySign(prvKey string, hash []byte) ([]byte, error) {
+
+	// 字符串转私钥
+	privateKey, err := HexToECDSA(prvKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// 私钥签名(压缩版)
+	signature, err := SignCompact(S256(), privateKey, hash, true)
+	if err != nil {
+		return nil, err
+	}
+	return signature, nil
+}
+
+// PubKeyCheckSign 公钥验签
+func PubKeyCheckSign(signatrue []byte, hash []byte, pubKeyStr string) (bool, error) {
+
+	// 签名获取公钥
+	pub, err := SignToPubKey(signatrue, hash)
+	if err != nil {
+		return false, err
+	}
+
+	// 公钥转66哈希字符串
+	hexPubKey := PubKeyToHex(pub)
+
+	// 两相对比
+	if hexPubKey == pubKeyStr {
+		return true, nil
+	}
+	return false, errors.New("Attestation of failure. ")
+}
+
+// SignToPubKey 签名换公钥
+func SignToPubKey(signature, hash []byte) (*PublicKey, error) {
+	pub, _, err := RecoverCompact(S256(), signature, hash)
+	if err != nil {
+		return nil, err
+	}
+	return pub, nil
+}
