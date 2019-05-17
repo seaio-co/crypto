@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"errors"
+	"fmt"
 	"github.com/phjt-go/crypto/sha3"
 )
 
@@ -28,6 +29,12 @@ func PKCS5UnPadding(origData []byte) []byte {
 // AesEncrypt aes算法加密
 func AesEncrypt(origData, key []byte) ([]byte, error) {
 
+	defer func() {
+		if e := recover(); e != nil {
+			fmt.Println("AesEncrypt error,", e)
+		}
+	}()
+
 	key16 := make([]byte, 16)
 	copy(key16, key)
 
@@ -49,6 +56,12 @@ func AesEncrypt(origData, key []byte) ([]byte, error) {
 
 // AesDecrypt aes算法解密
 func AesDecrypt(crypted, key []byte) ([]byte, error) {
+
+	defer func() {
+		if e := recover(); e != nil {
+			fmt.Println("AesDecrypt error,", e)
+		}
+	}()
 
 	key16 := make([]byte, 16)
 	copy(key16, key)
