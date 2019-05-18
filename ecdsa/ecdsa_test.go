@@ -180,7 +180,7 @@ func Test_Sign2(b *testing.T) {
 		h := testHash.Sum(nil)
 		prk.Sign(h)
 	}
-	b.Log("创建成功,Tps:%v", time.Since(t0))
+	b.Log("创建成功,Tps:", time.Since(t0))
 }
 
 //生成公私钥对 - 测试方法
