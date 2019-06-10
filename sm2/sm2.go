@@ -23,9 +23,10 @@ var (
 
 // Various 常量
 const (
-	aesIV    = "IV for <SM2> CTR"
-	BitSize  = 256
-	KeyBytes = (BitSize + 7) / 8
+	aesIV      = "IV for <SM2> CTR"
+	BitSize    = 256
+	KeyBytes   = (BitSize + 7) / 8
+	UnCompress = 0x04
 )
 
 // PublicKey 公钥
@@ -536,7 +537,7 @@ func RawBytesToPublicKey(bytes []byte) (*PublicKey, error) {
 		return nil, errors.New("Public key raw bytes length must be " + string(KeyBytes*2))
 	}
 	publicKey := new(PublicKey)
-	publicKey.Curve = sm2P256
+	publicKey.Curve = P256Sm2()
 	publicKey.X = new(big.Int).SetBytes(bytes[:KeyBytes])
 	publicKey.Y = new(big.Int).SetBytes(bytes[KeyBytes:])
 	return publicKey, nil
@@ -548,8 +549,58 @@ func RawBytesToPrivateKey(bytes []byte) (*PrivateKey, error) {
 		return nil, errors.New("Private key raw bytes length must be " + string(KeyBytes))
 	}
 	privateKey := new(PrivateKey)
-	privateKey.Curve = sm2P256
+	privateKey.Curve = P256Sm2()
 	privateKey.D = new(big.Int).SetBytes(bytes)
 	privateKey.X, privateKey.Y = privateKey.Curve.ScalarBaseMult(privateKey.D.Bytes())
 	return privateKey, nil
+}
+
+// PublicKey转[]byte 以0x04开头
+func (pub *PublicKey) GetUnCompressBytes() []byte {
+	xBytes := pub.X.Bytes()
+	yBytes := pub.Y.Bytes()
+	xl := len(xBytes)
+	yl := len(yBytes)
+
+	raw := make([]byte, 1+KeyBytes*2)
+	raw[0] = UnCompress
+	if xl > KeyBytes {
+		copy(raw[1:1+KeyBytes], xBytes[xl-KeyBytes:])
+	} else if xl < KeyBytes {
+		copy(raw[1+(KeyBytes-xl):1+KeyBytes], xBytes)
+	} else {
+		copy(raw[1:1+KeyBytes], xBytes)
+	}
+
+	if yl > KeyBytes {
+		copy(raw[1+KeyBytes:], yBytes[yl-KeyBytes:])
+	} else if yl < KeyBytes {
+		copy(raw[1+KeyBytes+(KeyBytes-yl):], yBytes)
+	} else {
+		copy(raw[1+KeyBytes:], yBytes)
+	}
+	return raw
+}
+
+// PublicKey转[]byte
+func (pub *PublicKey) GetRawBytes() []byte {
+	raw := pub.GetUnCompressBytes()
+	return raw[1:]
+}
+
+// PrivateKey[]byte
+func (pri *PrivateKey) GetRawBytes() []byte {
+	dBytes := pri.D.Bytes()
+	dl := len(dBytes)
+	if dl > KeyBytes {
+		raw := make([]byte, KeyBytes)
+		copy(raw, dBytes[dl-KeyBytes:])
+		return raw
+	} else if dl < KeyBytes {
+		raw := make([]byte, KeyBytes)
+		copy(raw[KeyBytes-dl:], dBytes)
+		return raw
+	} else {
+		return dBytes
+	}
 }
