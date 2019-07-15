@@ -1,8 +1,8 @@
 package ecdsa
 
 import (
-	"github.com/phjt-go/crypto/base58"
-	"github.com/phjt-go/crypto/sha3"
+	"github.com/seaio-co/crypto/base58"
+	"github.com/seaio-co/crypto/sha3"
 	"strings"
 )
 

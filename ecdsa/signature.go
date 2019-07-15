@@ -10,7 +10,7 @@ import (
 	"hash"
 	"math/big"
 
-	"github.com/phjt-go/crypto/sha3"
+	"github.com/seaio-co/crypto/sha3"
 )
 
 var (

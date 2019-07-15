@@ -12,7 +12,7 @@ import (
 	"encoding/asn1"
 	"encoding/binary"
 	"errors"
-	"github.com/phjt-go/crypto/sm3"
+	"github.com/seaio-co/crypto/sm3"
 	"io"
 	"math/big"
 )
