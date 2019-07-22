@@ -28,7 +28,6 @@ func PKCS5UnPadding(origData []byte) []byte {
 
 // AesEncrypt aes算法加密
 func AesEncrypt(origData, key []byte) ([]byte, error) {
-
 	defer func() {
 		if e := recover(); e != nil {
 			fmt.Println("AesEncrypt error,", e)
@@ -68,7 +67,6 @@ func AesDecrypt(crypted, key []byte) ([]byte, error) {
 
 	hash := crypted[:32]
 	crypted = crypted[32:]
-
 	block, err := aes.NewCipher(key16)
 	if err != nil {
 		return nil, err

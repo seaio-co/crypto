@@ -24,6 +24,7 @@ type Alphabet struct {
 
 // NewAlphabet 会从58长度的字符串创建一个自定义字母表。 但长度必须为58为
 func NewAlphabet(alphabet string) *Alphabet {
+
 	if utf8.RuneCountInString(alphabet) != 58 {
 		panic(fmt.Sprintf("Base58 Alphabet length must 58, but %d", utf8.RuneCountInString(alphabet)))
 	}
@@ -55,9 +56,11 @@ func (alphabet Alphabet) String() string {
 
 // Encode 根据传进来的参数进行加密
 func Encode(input []byte, alphabet *Alphabet) string {
+
 	// prefix 0
 	inputLength := len(input)
 	prefixZeroes := 0
+
 	//剔除0开头的
 	for prefixZeroes < inputLength && input[prefixZeroes] == 0 {
 		prefixZeroes++
