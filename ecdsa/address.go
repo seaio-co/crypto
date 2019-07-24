@@ -20,13 +20,6 @@ var addressT = reflect.TypeOf(Address{})
 // Address 表示20字节地址
 type Address [AddressLength]byte
 
-// BytesToAddress byte转address
-func BytesToAddress(b []byte) Address {
-	var a Address
-	a.SetBytes(b)
-	return a
-}
-
 // StringToAddress 返回字节
 func StringToAddress(s string) Address { return BytesToAddress([]byte(s)) }
 
@@ -35,14 +28,6 @@ func BigToAddress(b *big.Int) Address { return BytesToAddress(b.Bytes()) }
 
 // HexToAddress 十六进制字符串转地址。
 func HexToAddress(s string) Address { return BytesToAddress(conv.FromHex(s)) }
-
-// IsHexAddress 验证字符串是否可以表示有效的十六进制编码的地址。
-func IsHexAddress(s string) bool {
-	if conv.HasHexPrefix(s) {
-		s = s[2:]
-	}
-	return len(s) == 2*AddressLength && conv.IsHex(s)
-}
 
 // Bytes 字节获取底层地址的字符串表示形式。
 func (a Address) Bytes() []byte { return a[:] }
@@ -154,4 +139,19 @@ func (ma *MixedcaseAddress) ValidChecksum() bool {
 // Original 原始返回混合大小写输入字符串
 func (ma *MixedcaseAddress) Original() string {
 	return ma.original
+}
+
+// IsHexAddress 验证字符串是否可以表示有效的十六进制编码的地址。
+func IsHexAddress(s string) bool {
+	if conv.HasHexPrefix(s) {
+		s = s[2:]
+	}
+	return len(s) == 2*AddressLength && conv.IsHex(s)
+}
+
+// BytesToAddress byte转address
+func BytesToAddress(b []byte) Address {
+	var a Address
+	a.SetBytes(b)
+	return a
 }
