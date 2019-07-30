@@ -231,7 +231,6 @@ func (c *Certificate) isValid(certType int, currentChain []*Certificate, opts *V
 	// that the certificate had to be used strictly as specified in the
 	// keyUsage, and a keyUsage containing a flag indicating that the RSA
 	// encryption key could only be used for Diffie-Hellman key agreement.
-
 	if certType == intermediateCertificate && (!c.BasicConstraintsValid || !c.IsCA) {
 		return CertificateInvalidError{c, NotAuthorizedToSign}
 	}
@@ -242,7 +241,6 @@ func (c *Certificate) isValid(certType int, currentChain []*Certificate, opts *V
 			return CertificateInvalidError{c, TooManyIntermediates}
 		}
 	}
-
 	return nil
 }
 
@@ -273,11 +271,9 @@ func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err e
 	if opts.Roots == nil && runtime.GOOS == "windows" {
 		return c.systemVerify(&opts)
 	}
-
 	if len(c.UnhandledCriticalExtensions) > 0 {
 		return nil, UnhandledCriticalExtension{}
 	}
-
 	if opts.Roots == nil {
 		opts.Roots = systemRootsPool()
 		if opts.Roots == nil {
@@ -289,7 +285,6 @@ func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err e
 	if err != nil {
 		return
 	}
-
 	if len(opts.DNSName) > 0 {
 		err = c.VerifyHostname(opts.DNSName)
 		if err != nil {
@@ -328,7 +323,6 @@ func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err e
 	if len(chains) == 0 {
 		err = CertificateInvalidError{c, IncompatibleUsage}
 	}
-
 	return
 }
 
