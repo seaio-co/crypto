@@ -136,7 +136,6 @@ func (d *state) Write(p []byte) (written int, err error) {
 			}
 		}
 	}
-
 	return
 }
 
@@ -148,7 +147,6 @@ func (d *state) Read(out []byte) (n int, err error) {
 	}
 
 	n = len(out)
-
 	for len(out) > 0 {
 		n := copy(out, d.buf)
 		d.buf = d.buf[n:]
@@ -158,7 +156,6 @@ func (d *state) Read(out []byte) (n int, err error) {
 			d.permute()
 		}
 	}
-
 	return
 }
 
@@ -211,25 +208,6 @@ func ShakeSum256(hash, data []byte) {
 	h.Read(hash)
 }
 
-// NewKeccak256 创建一个新的Keccak-256散列。参与了大部分工作，详情求见具体篇
-//--------------------------------------下面这些接口提供了用于创建SHA-3和SHAKE散列函数实例的函数，以及用于散列字节的实用函数。--------------------------------------//
-func NewKeccak256() hash.Hash { return &state{rate: 136, outputLen: 32, dsbyte: 0x01} }
-
-// NewKeccak512 创建一个新的Keccak-512散列。参与了创建验证缓存和检查一个块是否满足PoW难度要求，要么使用通常的ethash缓存，要么使用完整的DAG使远程挖掘更快
-func NewKeccak512() hash.Hash { return &state{rate: 72, outputLen: 64, dsbyte: 0x01} }
-
-// New224 创建一个新的SHA3-224散列。它的一般安全强度是224位对前图像攻击，112位对碰撞攻击。
-func New224() hash.Hash { return &state{rate: 144, outputLen: 28, dsbyte: 0x06} }
-
-// New256 创建一个新的SHA3-256散列。它的一般安全强度是256位的图像攻击，和128位的碰撞攻击。
-func New256() hash.Hash { return &state{rate: 136, outputLen: 32, dsbyte: 0x06} }
-
-// New384 创建一个新的SHA3-384散列。它的一般安全强度是384位对前映像攻击，192位对碰撞攻击。
-func New384() hash.Hash { return &state{rate: 104, outputLen: 48, dsbyte: 0x06} }
-
-// New512 创建一个新的SHA3-512散列。它的一般安全强度是512位，以防止预映像攻击，和256位，以防止碰撞攻击
-func New512() hash.Hash { return &state{rate: 72, outputLen: 64, dsbyte: 0x06} }
-
 // Sum224 返回数据的SHA3-224摘要。
 func Sum224(data []byte) (digest [28]byte) {
 	h := New224()
@@ -270,3 +248,22 @@ func Keccak256(data ...[]byte) []byte {
 	}
 	return d.Sum(nil)
 }
+
+// NewKeccak256 创建一个新的Keccak-256散列。参与了大部分工作，详情求见具体篇
+//--------------------------------------下面这些接口提供了用于创建SHA-3和SHAKE散列函数实例的函数，以及用于散列字节的实用函数。--------------------------------------//
+func NewKeccak256() hash.Hash { return &state{rate: 136, outputLen: 32, dsbyte: 0x01} }
+
+// NewKeccak512 创建一个新的Keccak-512散列。参与了创建验证缓存和检查一个块是否满足PoW难度要求，要么使用通常的ethash缓存，要么使用完整的DAG使远程挖掘更快
+func NewKeccak512() hash.Hash { return &state{rate: 72, outputLen: 64, dsbyte: 0x01} }
+
+// New224 创建一个新的SHA3-224散列。它的一般安全强度是224位对前图像攻击，112位对碰撞攻击。
+func New224() hash.Hash { return &state{rate: 144, outputLen: 28, dsbyte: 0x06} }
+
+// New256 创建一个新的SHA3-256散列。它的一般安全强度是256位的图像攻击，和128位的碰撞攻击。
+func New256() hash.Hash { return &state{rate: 136, outputLen: 32, dsbyte: 0x06} }
+
+// New384 创建一个新的SHA3-384散列。它的一般安全强度是384位对前映像攻击，192位对碰撞攻击。
+func New384() hash.Hash { return &state{rate: 104, outputLen: 48, dsbyte: 0x06} }
+
+// New512 创建一个新的SHA3-512散列。它的一般安全强度是512位，以防止预映像攻击，和256位，以防止碰撞攻击
+func New512() hash.Hash { return &state{rate: 72, outputLen: 64, dsbyte: 0x06} }
